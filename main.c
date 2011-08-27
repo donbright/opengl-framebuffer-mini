@@ -22,6 +22,8 @@ http://en.wikibooks.org/wiki/OpenGL_Programming - hello world
 http://glprogramming.com/red/chapter10.html - hello triangles
 http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2:-Hello-World:-The-Slideshow.html - hello glut
 http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2:-Hello-World:-The-Slideshow.html - hello SDL/OpenGL
+http://www.gamedev.net/topic/573940-glx-why-does-glxcreatewindow-exist/ GLX hello
+http://www.opengl.org/sdk/docs/man/xhtml/glXIntro.xml GLX Hello world
 
 http://www.opengl.org/wiki/GL_EXT_framebuffer_object - framebuffer info
 http://www.opengl.org/wiki/Framebuffer_Object - more framebuffer info
@@ -29,6 +31,8 @@ http://www.opengl.org/wiki/Image_Format - description of RGBA 8, etc
 
 http://www.songho.ca/opengl/gl_fbo.html Song Ho Ahn's Framebuffer example code
 http://www.mesa3d.org/ 'osdemo' from 'Mesa Demos'
+
+http://www.mesa3d.org/brianp/sig97/offscrn.htm - really old stuff you may run into
 
 */
 
@@ -41,8 +45,10 @@ http://www.mesa3d.org/ 'osdemo' from 'Mesa Demos'
 #include <SDL/SDL.h>
 #elif defined(GLUT_DUMMY)
 #include <GL/glut.h>
+#elif defined(GLX_DUMMY)
+extern int glx_dummy();
 #else
-#error "need SDL_DUMMY or GLUT_DUMMY defined"
+#error "need SDL_DUMMY or GLUT_DUMMY or GLX_DUMMY defined"
 #endif
 
 const int IMAGE_WIDTH = 256;
@@ -109,6 +115,9 @@ void init_dummy_window(int argc, char **argv)
 #ifdef SDL_DUMMY
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_SetVideoMode(10,10,32,SDL_OPENGL);
+#endif
+#ifdef GLX_DUMMY
+	glx_dummy();
 #endif
 }
 
