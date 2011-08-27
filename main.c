@@ -7,9 +7,9 @@
  Answer: OpenGL pretty much requires a window to init itself. After that,
   the window is not used. That's why it's called a "dummy window".
 
- Question: Does it use GLUT or SDL to create the dummy window?
- Answer: Either. You can choose by uncommenting part of init_dummy_window()
-  and editing the Makefile
+ Question: How does it create the dummy window?
+ Answer: It uses a snippet of GLUT or SDL or GLX
+  You can switch between these options by editing the Makefile
 
  Question: My OpenGL isn't working?
  Answer: This command line will use a 'software' renderer, which might help.
