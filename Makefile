@@ -12,7 +12,7 @@ clean: clean-custom
 	${RM} main.o fbo
 
 fbo: main.o
-	$(CC) -o "fbo" $(LIBS) main.o
+	$(CC) -o fbo $(LIBS) main.o
 
 main.o: main.c
 	$(CC) -c main.c -o main.o $(CFLAGS)
