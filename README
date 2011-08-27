@@ -1,0 +1,2 @@
+This is a minimal example for using the OpenGL Framebuffer to
+draw an image 'offscreen', and save it to a file. 
