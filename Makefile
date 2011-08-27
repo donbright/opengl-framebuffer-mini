@@ -1,6 +1,6 @@
 CC   = gcc
 CFLAGS = -g
-# LIBS =  -lglut -lGLU -lGL
+# LIBS =  -lglut -lGL
 LIBS =  -lSDL -lGL
 RM = rm -f
 
@@ -16,3 +16,6 @@ fbo: main.o
 
 main.o: main.c
 	$(CC) -c main.c -o main.o $(CFLAGS)
+
+run: fbo
+	rm -f ./*.tga && ./fbo && eog ./*.tga

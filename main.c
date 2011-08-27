@@ -3,16 +3,16 @@
  using OpenGL Framebuffer object to write to an 'offscreen buffer',
  and save the results to a TARGA (.tga) image file.
 
- GLUT or SDL are required only to create a 'dummy window'. you can
- experiment with using one or the other by uncommenting the #includes,
- the init_dummy_window() function, and the Makefile
-
  Question: How is it 'offscreen' if you have to create a window?
  Answer: OpenGL pretty much requires a window to init itself. After that,
   the window is not used. That's why it's called a "dummy window".
 
- Question: How can I use it if I don't have an OpenGL graphics card? 
- Answer: This command line will use a 'software' renderer:
+ Question: Does it use GLUT or SDL to create the dummy window?
+ Answer: Either. You can choose by uncommenting part of init_dummy_window()
+  and editing the Makefile
+
+ Question: My OpenGL isn't working?
+ Answer: This command line will use a 'software' renderer, which might help.
 
  LIBGL_ALWAYS_SOFTWARE=1 ./fbo
 
@@ -20,12 +20,14 @@ See Also
 
 http://en.wikibooks.org/wiki/OpenGL_Programming - hello world
 http://glprogramming.com/red/chapter10.html - hello triangles
+http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2:-Hello-World:-The-Slideshow.html - hello glut
+http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2:-Hello-World:-The-Slideshow.html - hello SDL/OpenGL
 
 http://www.opengl.org/wiki/GL_EXT_framebuffer_object - framebuffer info
 http://www.opengl.org/wiki/Framebuffer_Object - more framebuffer info
 http://www.opengl.org/wiki/Image_Format - description of RGBA 8, etc
 
-http://www.songho.ca/opengl/gl_fbo.html Song Ho's Framebuffer example code
+http://www.songho.ca/opengl/gl_fbo.html Song Ho Ahn's Framebuffer example code
 http://www.mesa3d.org/ 'osdemo' from 'Mesa Demos'
 
 */
@@ -83,7 +85,7 @@ void draw_scene()
 	angle += 15;
 
 	GLubyte pixels[IMAGE_WIDTH*IMAGE_HEIGHT*4];
-	glReadPixels(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	glReadPixels(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT, GL_BGRA, GL_UNSIGNED_BYTE, pixels);
 	char fname[30];
 	snprintf(fname,30,"test%04i.tga",angle);
 	printf("writing %s\n",fname);
@@ -92,8 +94,9 @@ void draw_scene()
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
 
-void init_dummy_window()
+void init_dummy_window(int argc, char **argv)
 {
+// uncomment the desired window code. also edit Makefile
 /*
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_ALPHA);
@@ -107,7 +110,7 @@ void init_dummy_window()
 
 int main(int argc, char **argv)
 {
-	init_dummy_window();
+	init_dummy_window(argc, argv);
 
 	// create framebuffer object
 	glGenFramebuffersEXT(1, &fboId);
@@ -116,7 +119,7 @@ int main(int argc, char **argv)
 	// create renderbuffer object
 	glGenRenderbuffers(1, &renderbufferId);
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderbufferId);
-	glRenderbufferStorage( GL_RENDERBUFFER_EXT, GL_RGBA8, IMAGE_WIDTH, IMAGE_HEIGHT );
+	glRenderbufferStorage( GL_RENDERBUFFER_EXT, GL_RGBA, IMAGE_WIDTH, IMAGE_HEIGHT );
 
 	// attach renderbuffer to framebuffer at 'color attachment point'
 	glFramebufferRenderbuffer( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, renderbufferId );
