@@ -35,11 +35,15 @@ http://www.mesa3d.org/ 'osdemo' from 'Mesa Demos'
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
 #include <GL/glext.h>
-
-#include <SDL/SDL.h>
-//#include <GL/glut.h>
-
 #include <stdio.h>
+
+#if defined(SDL_DUMMY)
+#include <SDL/SDL.h>
+#elif defined(GLUT_DUMMY)
+#include <GL/glut.h>
+#else
+#error "need SDL_DUMMY or GLUT_DUMMY defined"
+#endif
 
 const int IMAGE_WIDTH = 256;
 const int IMAGE_HEIGHT = 256;
@@ -96,15 +100,16 @@ void draw_scene()
 
 void init_dummy_window(int argc, char **argv)
 {
-// uncomment the desired window code. also edit Makefile
-/*
+#ifdef GLUT_DUMMY
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_ALPHA);
 	glutInitWindowSize(10, 10);
 	glutCreateWindow("fbotest");
-*/
+#endif
+#ifdef SDL_DUMMY
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_SetVideoMode(10,10,32,SDL_OPENGL);
+#endif
 }
 
 

@@ -1,8 +1,14 @@
 CC   = gcc
-CFLAGS = -g
-# LIBS =  -lglut -lGL
-LIBS =  -lSDL -lGL
 RM = rm -f
+
+# for SDL use this
+#CFLAGS = -g -DSDL_DUMMY
+#LIBS =  -lSDL -lGL
+
+# for glut use this
+CFLAGS = -g -DGLUT_DUMMY
+LIBS =  -lglut -lGL
+
 
 .PHONY: all all-before all-after clean clean-custom
 
