@@ -1,9 +1,8 @@
 This is a minimal example for using the OpenGL Framebuffer to
-draw an image 'offscreen', and save it to a file. 
+draw an image 'offscreen', and save it to a file. The image is a red triangle.
 
 This uses targa / TGA as a file format 
 
 It can use several different methods to create a 'dummy window'
 which is necessary (at least so far) to enable OpenGL, even for offscreen
-drawing. 
-
+drawing. The methods are SDL, GLX, and GLUT
