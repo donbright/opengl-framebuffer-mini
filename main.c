@@ -16,6 +16,11 @@
 
  LIBGL_ALWAYS_SOFTWARE=1 ./fbo
 
+ Question: So... i see this GLEW stuff in there...
+ Answer: Glew is completely unnecessary for this code. But just in case
+  you find yourself in a situation where GLEW is necessary, I have included
+  a GLEW_UGH ifdef to show how it can be accomplished.
+
 See Also
 
 http://en.wikibooks.org/wiki/OpenGL_Programming - hello world
@@ -33,8 +38,14 @@ http://www.songho.ca/opengl/gl_fbo.html Song Ho Ahn's Framebuffer example code
 http://www.mesa3d.org/ 'osdemo' from 'Mesa Demos'
 
 http://www.mesa3d.org/brianp/sig97/offscrn.htm - really old stuff you may run into
+http://www.gamedev.net/topic/552607-conflict-between-glew-and-sdl/ - glew + sdl
 
 */
+
+#ifdef GLEW_UGH
+#define NO_SDL_GLEXT
+#include <GL/glew.h>
+#endif
 
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
@@ -124,19 +135,25 @@ void init_dummy_window(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
+
 	init_dummy_window(argc, argv);
+
+#ifdef GLEW_UGH
+	// must come after openGL context init (done by dummy window)
+	glewInit();
+#endif
 
 	// create framebuffer object
 	glGenFramebuffersEXT(1, &fboId);
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboId);
 
 	// create renderbuffer object
-	glGenRenderbuffers(1, &renderbufferId);
+	glGenRenderbuffersEXT(1, &renderbufferId);
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderbufferId);
-	glRenderbufferStorage( GL_RENDERBUFFER_EXT, GL_RGBA, IMAGE_WIDTH, IMAGE_HEIGHT );
+	glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_RGBA, IMAGE_WIDTH, IMAGE_HEIGHT );
 
 	// attach renderbuffer to framebuffer at 'color attachment point'
-	glFramebufferRenderbuffer( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, renderbufferId );
+	glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, renderbufferId );
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	if (status == GL_FRAMEBUFFER_COMPLETE_EXT ) {

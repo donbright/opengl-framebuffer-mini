@@ -2,18 +2,22 @@ CC   = gcc
 RM = rm -f
 OBJS = main.o
 
-# for SDL use this
+# for SDL uncomment this
 CFLAGS = -g -DSDL_DUMMY
 LIBS =  -lSDL -lGL
 
-# for glut use this
+# for glut uncomment this
 #CFLAGS = -g -DGLUT_DUMMY
 #LIBS =  -lglut -lGL
 
-# for glx use this
+# for glx uncomment this
 #CFLAGS = -g -DGLX_DUMMY
 #LIBS =  -lX11 -lGL
 #OBJS += glx_dummy.o
+
+# yet another example: for SDL and GLEW together, uncomment this
+# CFLAGS = -g -DSDL_DUMMY -DGLEW_UGH
+# LIBS =  -lGL -lGLEW -lSDL
 
 .PHONY: all all-before all-after clean clean-custom
 
