@@ -1,15 +1,26 @@
-/* minimal example
+/*
 
- using OpenGL Framebuffer object to write to an 'offscreen buffer',
+ This is a minimal example of how to use an OpenGL Framebuffer Object
+ (sometimes called an FBO) to draw OpenGL commands to an 'offscreen buffer'
  and save the results to a TARGA (.tga) image file.
 
- Question: How is it 'offscreen' if you have to create a window?
- Answer: OpenGL pretty much requires a window to init itself. After that,
-  the window is not used. That's why it's called a "dummy window".
+ Question: Why not just use OSMesa?
+ Answer: I don't understand OSMesa.
 
- Question: How does it create the dummy window?
- Answer: It uses a snippet of GLUT or SDL or GLX
-  You can switch between these options by editing the Makefile
+ Question: How is it 'offscreen' if you have to create a window first?
+ Answer: The FBO functions cannot be called until an OpenGL context is created.
+  How do you create an OpenGL Context? There is no standard way.
+
+  You can create a window using a wrapper like SDL or GLU - this automatically
+  creates a Context.
+
+  If you want an 'offscreen' context, you have to use something like
+  Apple's NSOpenGLContext or GLXCreateNewContext.
+
+  This program shows several different ways. The GLX_PIXMAP_DUMMY is
+  currently the only version that works without creating any window.
+
+  You can switch between the context-creation methods by editing the Makefile
 
  Question: My OpenGL isn't working?
  Answer: This command line will use a 'software' renderer, which might help.
@@ -37,8 +48,14 @@ http://www.opengl.org/wiki/Image_Format - description of RGBA 8, etc
 http://www.songho.ca/opengl/gl_fbo.html Song Ho Ahn's Framebuffer example code
 http://www.mesa3d.org/ 'osdemo' from 'Mesa Demos'
 
-http://www.mesa3d.org/brianp/sig97/offscrn.htm - really old stuff you may run into
+http://www.mesa3d.org/brianp/sig97/offscrn.htm - explains offscreen in Windows and Unix before FBO was invented
 http://www.gamedev.net/topic/552607-conflict-between-glew-and-sdl/ - glew + sdl
+
+
+Offscreen Mesa info:
+
+http://www.mesa3d.org/osmesa.html
+http://www.mesa3d.org/brianp/sig97/offscrn.htm
 
 */
 
@@ -58,8 +75,10 @@ http://www.gamedev.net/topic/552607-conflict-between-glew-and-sdl/ - glew + sdl
 #include <GL/glut.h>
 #elif defined(GLX_DUMMY)
 extern int glx_dummy();
+#elif defined(GLX_PIXMAP_DUMMY)
+extern int glx_pixmap_dummy();
 #else
-#error "need SDL_DUMMY or GLUT_DUMMY or GLX_DUMMY defined"
+#error "need SDL_DUMMY or GLUT_DUMMY or GLX_DUMMY or GLX_PIXMAP_DUMMY defined"
 #endif
 
 const int IMAGE_WIDTH = 256;
@@ -129,6 +148,9 @@ void init_dummy_window(int argc, char **argv)
 #endif
 #ifdef GLX_DUMMY
 	glx_dummy();
+#endif
+#ifdef GLX_PIXMAP_DUMMY
+	glx_pixmap_dummy();
 #endif
 }
 

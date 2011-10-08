@@ -1,8 +1,25 @@
 /*
+
+set up an OpenGL contxet, by using glx pixmaps. This method requires
+no onscreen 'dummy window' to open the context, just an offscreen
+'dummy' pixmap.
+
 based on http://www.opengl.org/sdk/docs/man/xhtml/glXIntro.xml
 which was originally Copyright © 1991-2006 Silicon Graphics, Inc.
 licensed under the SGI Free Software B License.
 See http://oss.sgi.com/projects/FreeB/.
+
+See also http://www.mesa3d.org/brianp/sig97/offscrn.htm
+
+Note:
+
+ Glx 1.2 and GLX 1.3 use different functions. For example:
+  GLXCreatePixmap = GLX 1.3
+  GLXCreateGLXPixmap = GLX 1.2
+
+ If you mix them up, it can crash your X server completely.
+
+
 */
 
 #include <stdio.h>
@@ -11,7 +28,7 @@ See http://oss.sgi.com/projects/FreeB/.
 #include <GL/glx.h>
 
 int singleBufferAttributess[] = {
-	GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+	GLX_DRAWABLE_TYPE, GLX_PIXMAP_BIT,
 	GLX_RENDER_TYPE,   GLX_RGBA_BIT,
 	GLX_RED_SIZE, 1,
 	GLX_GREEN_SIZE, 1,
@@ -19,17 +36,17 @@ int singleBufferAttributess[] = {
 	None
 };
 
-int glx_dummy()
+int glx_pixmap_dummy()
 {
 	Display	*dpy;
-	Window xWin;
 	XVisualInfo *vInfo;
-	XSetWindowAttributes swa;
 	GLXFBConfig *fbConfigs;
 	GLXContext context;
-	GLXWindow glxWin;
-	int swaMask;
+	GLXPixmap glx_pixmap;
+	Pixmap x11_pixmap;
+
 	int numReturned;
+	int result;
 
 	dpy = XOpenDisplay( NULL );
 	if ( dpy == NULL ) {
@@ -43,23 +60,14 @@ int glx_dummy()
 
 	vInfo = glXGetVisualFromFBConfig( dpy, fbConfigs[0] );
 
-	swa.border_pixel = 0;
-	swa.event_mask = StructureNotifyMask;
-	swa.colormap = XCreateColormap( dpy, RootWindow(dpy, vInfo->screen),
-						vInfo->visual, AllocNone );
-	swaMask = CWBorderPixel | CWColormap | CWEventMask;
-	xWin = XCreateWindow( dpy, RootWindow(dpy, vInfo->screen), 0, 0, 10, 10,
-						  0, vInfo->depth, InputOutput, vInfo->visual,
-						  swaMask, &swa );
+	x11_pixmap = XCreatePixmap( dpy, RootWindow(dpy,vInfo->screen) , 10, 10, 8 );
 
-	context = glXCreateNewContext( dpy, fbConfigs[0], GLX_RGBA_TYPE,
-				 NULL, True );
+	glx_pixmap = glXCreatePixmap( dpy, fbConfigs[0], x11_pixmap, NULL );
 
-	glxWin = glXCreateWindow( dpy, fbConfigs[0], xWin, NULL );
+        context = glXCreateNewContext( dpy, fbConfigs[0], GLX_RGBA_TYPE, NULL, True );
 
-	XMapWindow( dpy, xWin );
+	glXMakeContextCurrent( dpy, glx_pixmap, glx_pixmap, context );
 
-	glXMakeContextCurrent( dpy, glxWin, glxWin, context );
 	return 1;
 }
 
