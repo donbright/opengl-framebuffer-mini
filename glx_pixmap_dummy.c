@@ -20,10 +20,6 @@ See main.c for links to GLX 1.2 vs 1.3 issues
 #include <GL/gl.h>
 #include <GL/glx.h>
 
-Bool WaitForNotify( Display *dpy, XEvent *event, XPointer arg ) {
-    return (event->type == MapNotify) && (event->xmap.window == (Window) arg);
-}
-
 void dump_vinfo(XVisualInfo *vi)
 {
 	//Visual *visual;
@@ -122,7 +118,7 @@ int glx_pixmap_dummy()
 	some 1.2 functions won't work right, while the 1.3 functions will.
 	The 1.3 will however generate a MESA warning at runtime.
 
-	To workaround this, detect the situation and use 'hybrid' mix of 
+	To workaround this, detect the situation and use 'hybrid' mix of
 	1.2 and 1.3 as needed.
 	*/
 	glXQueryVersion(dpy, &major, &minor);
