@@ -19,10 +19,16 @@ int singleBufferAttributess[] = {
 	None
 };
 
+Bool WaitForNotify(Display *d, XEvent *e, char *arg)
+{
+return (e->type == MapNotify) && (e->xmap.window == (Window)arg);
+}
+
 int glx_dummy()
 {
 	Display	*dpy;
 	Window xWin;
+	XEvent event;
 	XVisualInfo *vInfo;
 	XSetWindowAttributes swa;
 	GLXFBConfig *fbConfigs;
@@ -58,6 +64,8 @@ int glx_dummy()
 	glxWin = glXCreateWindow( dpy, fbConfigs[0], xWin, NULL );
 
 	XMapWindow( dpy, xWin );
+	XIfEvent( dpy, &event, WaitForNotify, (XPointer) xWin );
+        XSync( dpy, 1);
 
 	glXMakeContextCurrent( dpy, glxWin, glxWin, context );
 	return 1;

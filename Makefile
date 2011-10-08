@@ -10,7 +10,7 @@ OBJS = main.o
 #CFLAGS = -g -DGLUT_DUMMY
 #LIBS =  -lglut -lGL
 
-# for glx uncomment this
+# for glx using a tiny window uncomment this
 # CFLAGS = -g -DGLX_DUMMY
 # LIBS =  -lX11 -lGL
 # OBJS += glx_dummy.o
@@ -29,7 +29,7 @@ OBJS += glx_pixmap_dummy.o
 all: all-before fbo all-after
 
 clean: clean-custom
-	${RM} main.o fbo $(OBJS) *.tga
+	${RM} main.o fbo *.o *.tga
 
 fbo: $(OBJS)
 	$(CC) -o fbo $(LIBS) $(OBJS)

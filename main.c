@@ -23,7 +23,8 @@
   You can switch between the context-creation methods by editing the Makefile
 
  Question: My OpenGL isn't working?
- Answer: This command line will use a 'software' renderer, which might help.
+ Answer: This command line will use a 'software' renderer, which might help,
+  but it also might make the thing crash.
 
  LIBGL_ALWAYS_SOFTWARE=1 ./fbo
 
@@ -50,12 +51,30 @@ http://www.mesa3d.org/ 'osdemo' from 'Mesa Demos'
 
 http://www.mesa3d.org/brianp/sig97/offscrn.htm - explains offscreen in Windows and Unix before FBO was invented
 http://www.gamedev.net/topic/552607-conflict-between-glew-and-sdl/ - glew + sdl
-
+http://www.gamedev.net/topic/487783-solved-glcheckframebufferstatusext-returns-0/ - error checking FBO setup
 
 Offscreen Mesa info:
 
 http://www.mesa3d.org/osmesa.html
 http://www.mesa3d.org/brianp/sig97/offscrn.htm
+
+ARB vs EXT vs core info:
+
+http://www.opengl.org/wiki/Framebuffer_Object
+http://stackoverflow.com/questions/6912988/glgenframebuffers-or-glgenframebuffersex
+http://www.devmaster.net/forums/showthread.php?t=10967
+
+Glx 1.2 vs Glx 1.3:
+
+http://publib.boulder.ibm.com/infocenter/pseries/v5r3/index.jsp?topic=/com.ibm.aix.opengl/doc/openglrf/HowRenderXdraw.htm
+https://bugs.launchpad.net/ubuntu/+source/compiz/+bug/433488
+http://www.opengl.org/sdk/docs/man/xhtml/glXIntro.xml
+
+http://glprogramming.com/blue/ch07.html # GLX 1.2 initialization
+
+OSMESA:
+
+http://www.gnashdev.org/?q=node/46
 
 */
 
@@ -91,6 +110,7 @@ GLuint renderbufferId;
 
 void write_targa(char *filename, GLubyte *pixels, int width, int height)
 {
+	// based on mesademos, osmesa, public domain originally by Brian Paul
 	FILE *f = fopen( filename, "w" );
 	int y;
 	if (f) {
@@ -155,35 +175,85 @@ void init_dummy_window(int argc, char **argv)
 }
 
 
+int check_fbo_status()
+{
+	/* lots of things can go wrong when attaching framebuffers.
+	Song Ho's page is good: http://www.songho.ca/opengl/gl_fbo.html
+	This code is based on user V-man code from
+	http://www.opengl.org/wiki/GL_EXT_framebuffer_multisample
+	*/
+	GLenum status;
+	int result = -1;
+	status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+	if (glGetError() != GL_NO_ERROR)
+		printf("OpenGL Error %i\n",glGetError());
+	if (status == GL_FRAMEBUFFER_COMPLETE_EXT) {
+		printf("OpenGL Framebuffer object status is OK\n");
+		result = 0;
+	} else {
+		printf("OpenGL error setting up Framebuffer Object: ");
+	}
+
+	if (status == GL_FRAMEBUFFER_UNSUPPORTED_EXT)
+		printf("GL_FRAMEBUFFER_UNSUPPORTED_EXT\n");
+	else if (status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT)
+		printf("GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT\n");
+	else if (status == GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT)
+		printf("GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT\n");
+	else if (status == GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT)
+		printf("GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT - width / height problems?\n");
+	else if (status == GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT)
+		printf("GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT\n");
+	else if (status == GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT)
+		printf("GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT\n");
+	else if (status == GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT)
+		printf("GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT\n");
+	else if (status == GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT)
+		printf("GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_EXT\n");
+	else if (result !=0 ) {
+		printf("\n Unknown Code: glCheckFramebufferStatusEXT returned %i\n",status);
+	}
+	return result;
+}
+
+void check_glerror()
+{
+	if (glGetError())
+		printf( "OpenGL Error status: %i\n", glGetError());
+}
+
 int main(int argc, char **argv)
 {
-
 	init_dummy_window(argc, argv);
 
 #ifdef GLEW_UGH
 	// must come after openGL context init (done by dummy window)
 	glewInit();
+	printf("ARB FBO: %i\n",glewIsSupported("GL_ARB_framebuffer_object"));
+	printf("EXT FBO: %i\n",glewIsSupported("GL_EXT_framebuffer_object"));
 #endif
 
 	// create framebuffer object
 	glGenFramebuffersEXT(1, &fboId);
+	check_glerror();
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboId);
+	check_glerror();
 
 	// create renderbuffer object
 	glGenRenderbuffersEXT(1, &renderbufferId);
+	check_glerror();
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, renderbufferId);
+	check_glerror();
 	glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_RGBA, IMAGE_WIDTH, IMAGE_HEIGHT );
+	check_glerror();
 
 	// attach renderbuffer to framebuffer at 'color attachment point'
 	glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, renderbufferId );
+	check_glerror();
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-	if (status == GL_FRAMEBUFFER_COMPLETE_EXT ) {
-		printf("OpenGL Framebuffer status OK.\n");
-	} else {
-		printf("OpenGL Framebuffer error - incomplete attachment.\n");
-		return -1;
-	}
+	check_glerror();
+	if (check_fbo_status() <0 ) return -1;
 
 	glViewport(0,0,IMAGE_WIDTH,IMAGE_HEIGHT);
 	int i;
