@@ -6,6 +6,8 @@ context before creating the Framebuffer Objects. There are several
 different methods shown, including using SDL, GLUT, GLX/XLIB, and finally
 GLX Pixmaps.
 
+For sake of clarity, there is no error checking and no memory cleanup. 
+
 As of Oct 2011, these all require an X server. Only the GLX Pixmap method
 is able to work without flashing a tiny window on the screen. 
 

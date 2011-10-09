@@ -11,14 +11,14 @@ OBJS = main.o
 #LIBS =  -lglut -lGL
 
 # for glx using a tiny window uncomment this
-# CFLAGS = -g -DGLX_DUMMY
-# LIBS =  -lX11 -lGL
-# OBJS += glx_dummy.o
+CFLAGS = -g -DGLX_DUMMY
+LIBS =  -lX11 -lGL
+OBJS += glx_dummy.o
 
 # for glx fully offscreen, using GLXpixmap, uncomment this
-CFLAGS = -g -DGLX_PIXMAP_DUMMY
-LIBS =  -lX11 -lGL
-OBJS += glx_pixmap_dummy.o
+#CFLAGS = -g -DGLX_PIXMAP_DUMMY
+#LIBS =  -lX11 -lGL
+#OBJS += glx_pixmap_dummy.o
 
 # yet another example: for SDL and GLEW together, uncomment this
 # CFLAGS = -g -DSDL_DUMMY -DGLEW_UGH
@@ -34,8 +34,11 @@ clean: clean-custom
 fbo: $(OBJS)
 	$(CC) -o fbo $(LIBS) $(OBJS)
 
-glx_dummy.o: 
+glx_dummy.o: glx_dummy.c 
 	$(CC) -c glx_dummy.c -o glx_dummy.o $(CFLAGS)
+
+glx_pixmap_dummy.o: glx_pixmap_dummy.c 
+	$(CC) -c glx_pixmap_dummy.c -o glx_pixmap_dummy.o $(CFLAGS)
 	
 main.o: main.c
 	$(CC) -c main.c -o main.o $(CFLAGS)
