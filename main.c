@@ -35,6 +35,7 @@
 
 See Also
 
+
 http://en.wikibooks.org/wiki/OpenGL_Programming - hello world
 http://glprogramming.com/red/chapter10.html - hello triangles
 http://duriansoftware.com/joe/An-intro-to-modern-OpenGL.-Chapter-2:-Hello-World:-The-Slideshow.html - hello glut
@@ -69,12 +70,16 @@ Glx 1.2 vs Glx 1.3:
 http://publib.boulder.ibm.com/infocenter/pseries/v5r3/index.jsp?topic=/com.ibm.aix.opengl/doc/openglrf/HowRenderXdraw.htm
 https://bugs.launchpad.net/ubuntu/+source/compiz/+bug/433488
 http://www.opengl.org/sdk/docs/man/xhtml/glXIntro.xml
-
+http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=299750 # GlxCreateWindow / Pbuffers
 http://glprogramming.com/blue/ch07.html # GLX 1.2 initialization
 
 OSMESA:
 
 http://www.gnashdev.org/?q=node/46
+
+XLIB:
+
+http://tronche.com/gui/x/xlib-tutorial/2nd-program-anatomy.html - XLIB basics
 
 */
 

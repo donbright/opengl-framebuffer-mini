@@ -44,4 +44,4 @@ main.o: main.c
 	$(CC) -c main.c -o main.o $(CFLAGS)
 
 run: fbo
-	rm -f ./*.tga && ./fbo && eog ./*.tga
+	rm -f ./*.tga && ./fbo && feh ./*.tga

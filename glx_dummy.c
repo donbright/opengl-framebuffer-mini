@@ -151,8 +151,8 @@ return (e->type == MapNotify) && (e->xmap.window == (Window)arg);
 
 int glx_dummy()
 {
-	glxgears_dummy();
-	return 0;
+//	glxgears_dummy();
+//	return 0;
 	Display	*dpy;
 	Window xWin;
 	XEvent event;
@@ -188,13 +188,13 @@ int glx_dummy()
 	context = glXCreateNewContext( dpy, fbConfigs[0], GLX_RGBA_TYPE,
 				 NULL, True );
 
-	glxWin = glXCreateWindow( dpy, fbConfigs[0], xWin, NULL );
+//	glxWin = glXCreateWindow( dpy, fbConfigs[0], xWin, NULL );
 
-	XMapWindow( dpy, xWin );
-	XIfEvent( dpy, &event, WaitForNotify, (XPointer) xWin );
+	//XMapWindow( dpy, xWin );
+	//XIfEvent( dpy, &event, WaitForNotify, (XPointer) xWin );
         XSync( dpy, 1);
 
-	glXMakeContextCurrent( dpy, glxWin, glxWin, context );
+	glXMakeContextCurrent( dpy, xWin, xWin, context );
 	return 1;
 }
 
