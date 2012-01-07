@@ -11,8 +11,8 @@ OBJS = main.o
 #LIBS =  -lglut -lGL
 
 # for glx using a tiny window uncomment this
-CFLAGS = -g -DGLX_DUMMY
-LIBS =  -lX11 -lGL
+CFLAGS = -g -DGLX_DUMMY 
+LIBS =  -lX11 -lGL -lGLEW
 OBJS += glx_dummy.o
 
 # for glx fully offscreen, using GLXpixmap, uncomment this

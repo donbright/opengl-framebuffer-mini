@@ -58,6 +58,7 @@ Offscreen Mesa info:
 
 http://www.mesa3d.org/osmesa.html
 http://www.mesa3d.org/brianp/sig97/offscrn.htm
+http://www.codesampler.com/linuxsrc.htm
 
 ARB vs EXT vs core info:
 
@@ -83,14 +84,14 @@ http://tronche.com/gui/x/xlib-tutorial/2nd-program-anatomy.html - XLIB basics
 
 */
 
-#ifdef GLEW_UGH
-#define NO_SDL_GLEXT
+//#ifdef GLEW_UGH
+//#define NO_SDL_GLEXT
 #include <GL/glew.h>
-#endif
+//#endif
 
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>
-#include <GL/glext.h>
+//#define GL_GLEXT_PROTOTYPES
+//#include <GL/gl.h>
+//#include <GL/glext.h>
 #include <stdio.h>
 
 #if defined(SDL_DUMMY)
@@ -223,6 +224,7 @@ int check_fbo_status()
 
 void check_glerror()
 {
+	printf( "OpenGL Error status: %i\n", glGetError());
 	if (glGetError())
 		printf( "OpenGL Error status: %i\n", glGetError());
 }
@@ -231,14 +233,15 @@ int main(int argc, char **argv)
 {
 	init_dummy_window(argc, argv);
 
-#ifdef GLEW_UGH
+//#ifdef GLEW_UGH
 	// must come after openGL context init (done by dummy window)
 	glewInit();
 	printf("ARB FBO: %i\n",glewIsSupported("GL_ARB_framebuffer_object"));
 	printf("EXT FBO: %i\n",glewIsSupported("GL_EXT_framebuffer_object"));
-#endif
+//#endif
 
 	// create framebuffer object
+	printf("%i\n",GL_FRAMEBUFFER_EXT);
 	glGenFramebuffersEXT(1, &fboId);
 	check_glerror();
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fboId);

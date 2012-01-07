@@ -11,4 +11,5 @@ For sake of clarity, there is no error checking and no memory cleanup.
 As of Oct 2011, these all require an X server. Only the GLX Pixmap method
 is able to work without flashing a tiny window on the screen. 
 
-
+As of January 2012, the ultimate result of this code can be found inside 
+of OpenSCAD, namely the openscad/tests/Offscreen*.cc files.
